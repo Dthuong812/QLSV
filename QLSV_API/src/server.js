@@ -2,8 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const connection = require('./config/database');
 const configViewEngine = require('./config/viewEngine');
+const studentRoute = require('./routes/studentRoute')
 
 const app = express();
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true })); 
 const port = process.env.PORT || 8888;
 const hostname = process.env.HOST_NAME || 'localhost';
 
@@ -14,6 +17,8 @@ const comment = require('./models/Comment');
 
 // Config view engine
 configViewEngine(app);
+
+app.use('/v1/student/', studentRoute);
 
 (async () => {
     try {
