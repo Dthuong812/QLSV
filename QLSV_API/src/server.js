@@ -3,6 +3,7 @@ const express = require('express');
 const connection = require('./config/database');
 const configViewEngine = require('./config/viewEngine');
 const studentRoute = require('./routes/studentRoute')
+const passwordRouter = require('./routes/authRoute')
 
 const app = express();
 app.use(express.json()); 
@@ -19,7 +20,7 @@ const comment = require('./models/Comment');
 configViewEngine(app);
 
 app.use('/v1/student/', studentRoute);
-
+app.use('/v1/auth', passwordRouter);
 (async () => {
     try {
         await connection();
