@@ -31,29 +31,26 @@ module.exports = {
         await newStudent.save();
         return {message: "Đăng ký thành công!"};
     },
-    loginStudent: async (
-        {email, password}
-    ) => {
-        const student = await Student.findOne({email});
-        if (! student) 
-            throw new Error("Email chưa được đăng ký!");
-        
-
-
-        // Kiểm tra password
+    loginStudent: async ({ email, password }) => {
+        const student = await Student.findOne({ email });
+    
+        if (!student) {
+            throw new Error("Email không tồn tại!");
+        }
+    
         const isMatch = await bcrypt.compare(password, student.password);
-        if (! isMatch) 
+        if (!isMatch) {
             throw new Error("Mật khẩu không đúng!");
-        
-
-
-        // // Tạo token JWT
-        const token = jwt.sign({
-            id: student._id,
-            email: student.email
-        }, "secret_key", {expiresIn: "1h"});
-
-        return {message: "Đăng nhập thành công!", token};
-    }
+        }
+    
+        // 🔥 Tạo token ở đây
+        const token = jwt.sign(
+            { id: student._id, email: student.email },
+            process.env.JWT_SECRET, 
+            { expiresIn: "7d" }
+        );
+        console.log("Generated Token:", token);
+        return { message: "Đăng nhập thành công!", token };
+        }  
 
 }

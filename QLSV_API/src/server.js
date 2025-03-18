@@ -4,6 +4,7 @@ const connection = require('./config/database');
 const configViewEngine = require('./config/viewEngine');
 const studentRoute = require('./routes/studentRoute')
 const passwordRouter = require('./routes/authRoute')
+const forumRouter = require('./routes/forumRoute')
 
 const app = express();
 app.use(express.json()); 
@@ -21,11 +22,12 @@ configViewEngine(app);
 
 app.use('/v1/student/', studentRoute);
 app.use('/v1/auth', passwordRouter);
+app.use('/v1/forum', forumRouter);
 (async () => {
     try {
         await connection();
         app.listen(port, hostname, () => {
-            console.log(`Backend zero app listening on http://${hostname}:${port}`);
+            console.log(`Backend zero app listening on http://${hostname}:${port} `);
         });
     } catch (error) {
         console.log(">>> Error connect to DB: ", error);

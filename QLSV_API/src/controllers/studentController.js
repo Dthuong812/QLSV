@@ -1,6 +1,4 @@
 const {registerStudent, loginStudent} = require('../services/studentService');
-
-
 module.exports = {
     createStudent: async (req, res) => {
         try {
