@@ -1,4 +1,4 @@
-const {registerStudent, loginStudent} = require('../services/studentService');
+const {registerStudent, loginStudent, restoreStudentService, deleteStudentService, updateStudentService, getStudentByIdService, getStudentsService} = require('../services/studentService');
 module.exports = {
     createStudent: async (req, res) => {
         try {
@@ -68,6 +68,58 @@ module.exports = {
             res.json({ message: "Mật khẩu đã được cập nhật!" });
         } catch (error) {
             res.status(500).json({ message: "Lỗi đặt lại mật khẩu!", error: error.message });
+        }
+    },
+     // Lấy danh sách sinh viên (phân trang)
+     getStudentsController: async (req, res) => {
+        try {
+            const { page = 1, limit = 10 } = req.query;
+            const data = await getStudentsService(parseInt(page), parseInt(limit));
+            res.status(200).json({ success: true, ...data });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+
+    // Lấy thông tin sinh viên theo ID
+    getStudentByIdController: async (req, res) => {
+        try {
+            const student = await getStudentByIdService(req.params.id);
+            if (!student) return res.status(404).json({ success: false, message: "Không tìm thấy sinh viên!" });
+            res.status(200).json({ success: true, student });
+        } catch (error) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    },
+
+    // Cập nhật thông tin sinh viên
+    updateStudentController: async (req, res) => {
+        try {
+            const student = await updateStudentService(req.params.id, req.body);
+            if (!student) return res.status(404).json({ success: false, message: "Không tìm thấy sinh viên!" });
+            res.status(200).json({ success: true, message: "Cập nhật thành công!", student });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    },
+
+    // Xóa mềm sinh viên
+    deleteStudentController: async (req, res) => {
+        try {
+            await deleteStudentService(req.params.id);
+            res.status(200).json({ success: true, message: "Sinh viên đã được xóa!" });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
+        }
+    },
+
+    // Khôi phục sinh viên đã bị xóa mềm
+    restoreStudentController: async (req, res) => {
+        try {
+            await restoreStudentService(req.params.id);
+            res.status(200).json({ success: true, message: "Sinh viên đã được khôi phục!" });
+        } catch (error) {
+            res.status(400).json({ success: false, message: error.message });
         }
     }
 }
