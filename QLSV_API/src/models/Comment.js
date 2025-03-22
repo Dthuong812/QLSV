@@ -4,11 +4,11 @@ const commentSchema = new mongoose.Schema({
     content: String,
     post: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Post'
+        ref: 'post'
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student'
+        ref: 'student'
     }
 }, {timestamps: true});
 commentSchema.plugin(mongoose_delete, {overrideMethods: "all"});

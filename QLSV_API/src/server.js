@@ -6,6 +6,7 @@ const studentRoute = require('./routes/studentRoute')
 const passwordRouter = require('./routes/authRoute')
 const forumRouter = require('./routes/forumRoute')
 const postRoutes = require("./routes/postRoute");
+const commentRoutes = require("./routes/commentRoute");
 
 
 const app = express();
@@ -26,6 +27,7 @@ app.use('/v1/student/', studentRoute);
 app.use('/v1/auth', passwordRouter);
 app.use('/v1/forum', forumRouter);
 app.use('/v1/post', postRoutes);
+app.use('/v1/comment', commentRoutes);
 (async () => {
     try {
         await connection();
