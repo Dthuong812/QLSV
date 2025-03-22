@@ -5,11 +5,11 @@ const postSchema = new mongoose.Schema({
     content: String,
     forum: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Forum'
+        ref: 'forum'
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Student'
+        ref: 'student'
     }
 }, {timestamps: true});
 postSchema.plugin(mongoose_delete, {overrideMethods: "all"});

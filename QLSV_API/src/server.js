@@ -5,6 +5,8 @@ const configViewEngine = require('./config/viewEngine');
 const studentRoute = require('./routes/studentRoute')
 const passwordRouter = require('./routes/authRoute')
 const forumRouter = require('./routes/forumRoute')
+const postRoutes = require("./routes/postRoute");
+
 
 const app = express();
 app.use(express.json()); 
@@ -23,6 +25,7 @@ configViewEngine(app);
 app.use('/v1/student/', studentRoute);
 app.use('/v1/auth', passwordRouter);
 app.use('/v1/forum', forumRouter);
+app.use('/v1/post', postRoutes);
 (async () => {
     try {
         await connection();
