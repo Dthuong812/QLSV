@@ -19,7 +19,7 @@ const student = require('./models/Student');
 const forum = require('./models/Forum');
 const post = require('./models/Post');
 const comment = require('./models/Comment');
-
+const Otp = require('./models/Otp');
 
 // Config view engine
 configViewEngine(app);
