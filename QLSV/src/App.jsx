@@ -1,17 +1,15 @@
 
-import Banner from './components/layout/Banner'
-import FooterComponent from './components/layout/FooterComponent'
 
-import Header from './components/layout/header'
-import MenuNav from './components/layout/MenuNav'
+import Homepage from './page/Homepage'
+import Login from './page/Login'
+import Register from './page/Register'
 
 function App() {
   return (
     <>
-      <Header></Header>
-      <Banner></Banner>
-      <MenuNav></MenuNav>
-      <FooterComponent></FooterComponent>
+      <Homepage></Homepage>
+      {/* <Login></Login> */}
+      {/* <Register></Register> */}
     </>
   )
 }

@@ -1,8 +1,10 @@
 import React from "react";
 import {Input, Button} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+    const navigate = useNavigate();
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
             <div className="container-fluid">
@@ -12,7 +14,7 @@ const Header = () => {
                         GRP_12
                     </a>
                     <div className="d-block d-lg-none mt-2">
-                        <Button type="primary" className="w-100">Đăng nhập</Button>
+                        <Button type="primary" className="w-100" onClick={() => navigate("/login")}>Đăng nhập</Button>
                     </div>
 
                 </div>
@@ -21,7 +23,7 @@ const Header = () => {
                         prefix={<SearchOutlined/>}/>
                 </div>
 
-                <Button type="primary" className="d-none d-lg-block mx-2">
+                <Button type="primary" className="d-none d-lg-block mx-2" onClick={() => navigate("/login")}>
                     Đăng nhập
                 </Button>
             </div>
