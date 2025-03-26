@@ -1,4 +1,4 @@
-const Otp = require('../models/Otp');
+const Otp = require('../models/OTP');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
