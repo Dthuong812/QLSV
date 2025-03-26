@@ -20,6 +20,7 @@ const forum = require('./models/Forum');
 const post = require('./models/Post');
 const comment = require('./models/Comment');
 
+
 // Config view engine
 configViewEngine(app);
 
