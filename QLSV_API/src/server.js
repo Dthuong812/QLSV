@@ -1,4 +1,5 @@
 require('dotenv').config();
+const cors = require('cors');
 const express = require('express');
 const connection = require('./config/database');
 const configViewEngine = require('./config/viewEngine');
@@ -20,7 +21,9 @@ const forum = require('./models/Forum');
 const post = require('./models/Post');
 const comment = require('./models/Comment');
 const Otp = require('./models/Otp');
-
+// config req.body
+app.use(cors({origin: 'http://localhost:5173'}))
+app.use(express.urlencoded({extended: true}))
 // Config view engine
 configViewEngine(app);
 
