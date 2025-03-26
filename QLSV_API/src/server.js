@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
 const port = process.env.PORT || 8888;
-const hostname = process.env.HOST_NAME || 'localhost';
+const hostname = process.env.HOST_NAME ||'0.0.0.0';
 
 const student = require('./models/Student');
 const forum = require('./models/Forum');
