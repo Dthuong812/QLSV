@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json()); 
 app.use(express.urlencoded({ extended: true })); 
 const port = process.env.PORT || 8888;
-const hostname = process.env.HOST_NAME || '0.0.0.0';
+// const hostname = process.env.HOST_NAME ||'0.0.0.0';
 
 const student = require('./models/Student');
 const forum = require('./models/Forum');
@@ -32,8 +32,8 @@ app.use('/v1/comment', commentRoutes);
 (async () => {
     try {
         await connection();
-        app.listen(port, hostname, () => {
-            console.log(`Backend zero app listening on http://${hostname}:${port} `);
+        app.listen(port,  () => {
+            console.log(`Backend zero app listening on http://:${port} `);
         });
     } catch (error) {
         console.log(">>> Error connect to DB: ", error);
