@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
+import { loginApi } from "../services/API/LoginApi"; 
 
 const { Link } = Typography;
 
@@ -9,13 +10,17 @@ const Login = () => {
   const [forgotPassword, setForgotPassword] = useState(false);
   const navigate = useNavigate();
 
-  const onFinish = (values) => {
+  const onFinish = async (values) => {
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const response = await loginApi(values.email, values.password);
       message.success("Đăng nhập thành công!");
+      localStorage.setItem("accessToken", response.data.accessToken); // Lưu token vào localStorage
       navigate("/"); // Chuyển hướng về trang chủ
-    }, 1000);
+    } catch (error) {
+      message.error("Email hoặc mật khẩu không đúng!");
+    }
+    setLoading(false);
   };
 
   const handleForgotPassword = (values) => {
