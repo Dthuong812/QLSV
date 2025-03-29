@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
-import { loginApi } from "../services/API/LoginApi"; 
+import { forgotPasswordApi, loginApi } from "../services/API/LoginApi"; 
 
 const { Link } = Typography;
 
@@ -23,10 +23,18 @@ const Login = () => {
     setLoading(false);
   };
 
-  const handleForgotPassword = (values) => {
-    message.success(`Hướng dẫn đặt lại mật khẩu đã được gửi đến ${values.email}`);
-    setForgotPassword(false);
+  const handleForgotPassword = async (values) => {
+    try {
+      setLoading(true);
+      await forgotPasswordApi(values.email); 
+      message.success(`Mã OTP đã được gửi tới ${values.email}`);
+      navigate(`/forgot?email=${values.email}`); 
+      message.error("Gửi mã OTP thất bại!");
+    } finally {
+      setLoading(false);
+    }
   };
+  
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
