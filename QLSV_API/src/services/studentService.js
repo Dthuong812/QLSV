@@ -1,4 +1,4 @@
-il:const aqp = require('api-query-params');
+const aqp = require('api-query-params');
 const Student = require('../models/Student');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
