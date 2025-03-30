@@ -1,40 +1,54 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { forgotPasswordApi, loginApi } from "../services/API/LoginApi"; 
-
+import { AuthContext } from "../context/AuthContext";
 const { Link } = Typography;
 
 const Login = () => {
+  const { login } = useContext(AuthContext);
   const [loading, setLoading] = useState(false);
   const [forgotPassword, setForgotPassword] = useState(false);
   const navigate = useNavigate();
-
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      const response = await loginApi(values.email, values.password);
-      message.success("Đăng nhập thành công!");
-      localStorage.setItem("accessToken", response.data.accessToken); // Lưu token vào localStorage
-      navigate("/"); // Chuyển hướng về trang chủ
+        const response = await loginApi(values.email, values.password);
+        console.log("Response Data:", response.data);
+
+        if (response?.data?.token && response?.data?.name) {
+            const { token, name } = response.data;
+
+            // Lưu vào localStorage
+            localStorage.setItem("accessToken", token);
+            localStorage.setItem("studentName", name);
+
+            // Cập nhật vào context
+            login(name, token);
+
+            message.success(`Chào mừng ${name}!`);
+            navigate("/");
+        } else {
+            message.error("Dữ liệu trả về không hợp lệ!");
+        }
     } catch (error) {
-      message.error("Email hoặc mật khẩu không đúng!");
+        console.error("Login error:", error);
+        message.error("Email hoặc mật khẩu không đúng!");
     }
     setLoading(false);
-  };
-
+};
   const handleForgotPassword = async (values) => {
+    setLoading(true);
     try {
-      setLoading(true);
-      await forgotPasswordApi(values.email); 
+      await forgotPasswordApi(values.email);
       message.success(`Mã OTP đã được gửi tới ${values.email}`);
-      navigate(`/forgot?email=${values.email}`); 
+      navigate(`/forgot?email=${values.email}`);
+    } catch (error) {
       message.error("Gửi mã OTP thất bại!");
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
