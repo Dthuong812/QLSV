@@ -22,7 +22,7 @@ const post = require('./models/Post');
 const comment = require('./models/Comment');
 const Otp = require('./models/Otp');
 // config req.body
-app.use(cors({origin: "https://2502-reactjs-un58.vercel.app/",
+app.use(cors({origin: "https://2502-reactjs-ic4b.vercel.app/",
 credentials: true
 }))
 app.use(express.urlencoded({extended: true}))
