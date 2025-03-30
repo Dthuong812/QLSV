@@ -1,4 +1,4 @@
-const aqp = require('api-query-params');
+il:const aqp = require('api-query-params');
 const Student = require('../models/Student');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -52,7 +52,7 @@ module.exports = {
             email: student.email
         }, process.env.JWT_SECRET, {expiresIn: "7d"});
         console.log("Generated Token:", token);
-        return {message: "Đăng nhập thành công!", token, name: student.name,student.email,student.student_id,student.class };
+        return {message: "Đăng nhập thành công!", token, name: student.name,email:student.email,studentId:student.student_id,studentClas:student.class };
     },
     // Lấy danh sách sinh viên (hỗ trợ phân trang)
     getStudentsService: async (page = 1, limit = 10) => {
