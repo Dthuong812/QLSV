@@ -3,37 +3,32 @@ import { createContext, useState, useEffect } from "react";
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [studentName, setStudentName] = useState(localStorage.getItem("studentName") || "");
-    const [token, setToken] = useState(localStorage.getItem("accessToken") || "");
+    const [student, setStudent] = useState(() => {
+        const storedStudent = localStorage.getItem("student");
+        return storedStudent ? JSON.parse(storedStudent) : null;
+    });
 
     useEffect(() => {
-        const storedName = localStorage.getItem("studentName");
-        const storedToken = localStorage.getItem("accessToken");
-        if (storedName && storedToken) {
-            setStudentName(storedName);
-            setToken(storedToken);
+        const storedStudent = localStorage.getItem("student");
+        if (storedStudent) {
+            setStudent(JSON.parse(storedStudent));
         }
     }, []);
 
-    const login = (name, token) => {
-        console.log("Saving to localStorage:", { name, token });
-    
-        localStorage.setItem("accessToken", token);
-        localStorage.setItem("studentName", name);
-        
-        setStudentName(name);
-        setToken(token);
+    const login = (userData) => {
+        localStorage.setItem("accessToken", userData.token);
+        localStorage.setItem("student", JSON.stringify(userData));
+        setStudent(userData);
     };
 
     const logout = () => {
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("studentName");
-        setStudentName("");
-        setToken("");
+        localStorage.removeItem("student");
+        setStudent(null);
     };
 
     return (
-        <AuthContext.Provider value={{ studentName, token, login, logout }}>
+        <AuthContext.Provider value={{ student, login, logout }}>
             {children}
         </AuthContext.Provider>
     );

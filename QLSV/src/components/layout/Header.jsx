@@ -1,12 +1,12 @@
 import React, {useContext} from "react";
 import {Input, Button} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
-import {Link, useNavigate} from "react-router-dom";
+import {Link, NavLink, useNavigate} from "react-router-dom";
 import {AuthContext} from "../../context/AuthContext";
 
 const Header = () => {
     const navigate = useNavigate();
-    const {studentName} = useContext(AuthContext);
+    const {student} = useContext(AuthContext);
 
     return (
         <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
@@ -19,9 +19,10 @@ const Header = () => {
 
                     <div className="d-block d-lg-none mt-2">
                         {
-                        studentName ? (
-                            <div className="w-100">
-                                {studentName} </div>
+                        student ? (
+                            <div className="w-100 fw-bold text-primary">
+                               <Link  to="/student"> {student.name}</Link> 
+                               </div>
                         ) : (
                             <Button type="primary" className="w-100"
                                 onClick={
@@ -43,12 +44,10 @@ const Header = () => {
                             {width: "200px"}
                     }>
                         {
-                        studentName ? (
-                            <div className="d-flex justify-content-end"
-                                style={
-                                    {width: "160px"}
-                            }>
-                                {studentName} </div>
+                        student ? (
+                            <div className="w-100 fw-bold ">
+                               <NavLink  to="/student"> {student.name}</NavLink> 
+                               </div>
                         ) : (
                             <Button type="primary"
                                 onClick={

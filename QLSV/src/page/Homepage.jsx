@@ -1,20 +1,22 @@
 import React from 'react'
 import Banner from '../components/layout/Banner'
 import FooterComponent from '../components/layout/FooterComponent'
-import Header from '../components/layout/header'
 import MenuNav from '../components/layout/MenuNav'
-import ForumData from '../components/forum/ForumData'
 import PostData from '../components/post/PostData'
 import TopicList from '../components/forum/TopicList'
+import PostNew from '../components/post/PostNew'
+import Header from '../components/layout/Header'
 const Homepage = () => {
   return (
     <>
      <Header></Header>
       <Banner></Banner>
       <MenuNav></MenuNav>
-      <ForumData></ForumData>
+      <PostNew></PostNew>
       <div className="d-flex">
-      <PostData></PostData>
+      <div className="w-75">
+      <PostData ></PostData>
+      </div>
       <TopicList></TopicList>
       </div>
       <FooterComponent></FooterComponent>

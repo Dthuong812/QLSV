@@ -1,45 +1,83 @@
-import React from "react";
-import { Card } from "antd";
-const forumData = [
-    {
-      id: 1,
-      title: "Coiny - Phông chữ vui nhộn và nổi bật cho thiết kế",
-      user: "phamhaii",
-      time: "10 phút trước",
- 
-    },
-    {
-      id: 2,
-      title: "[Font Việt hóa] SVN-Futura Normal (14 fonts)",
-      user: "nlququang",
-      time: "10 phút trước",
+import React, {useEffect, useRef, useState} from "react";
+import {Button, Card} from "antd";
+import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
+import {getForumApi} from "../../services/API/ForumApi";
 
-    },
-    {
-      id: 3,
-      title: "Trọn bộ font Acumin Pro Việt hóa - Font chữ thông dụng dành cho Designer",
-      user: "myhanh141190",
-      time: "Hôm nay lúc 10:05",
-
-    },
-  ];
 const ForumData = () => {
-    return (
-        <Card title="Mới nhất" className="shadow-sm m-4">
-          {forumData.map((item) => (
-            <div key={item.id} className="d-flex align-items-center py-2 border-bottom">
-              <div>
-                <a href="#" className="fw-bold text-primary d-block">
-                  {item.title}
-                </a>
-                <small className="text-muted">
-                  Mới nhất: {item.user} · {item.time}
-                </small>
-              </div>
-            </div>
-          ))}
-        </Card>
-      );
+    const [forums, setForums] = useState([]);
+    const scrollRef = useRef(null);
+
+    useEffect(() => {
+        const fetchForums = async () => {
+            try {
+                const res = await getForumApi();
+                setForums(res.data.forums);
+            } catch (error) {
+                console.error("Lỗi khi lấy danh sách forum:", error);
+            }
+        };
+
+        fetchForums();
+    }, []);
+
+    const handleScroll = (direction) => {
+        const scrollAmount = 300;
+        if (scrollRef.current) {
+            scrollRef.current.scrollBy({
+                left: direction === "left" ? - scrollAmount : scrollAmount,
+                behavior: "smooth"
+            });
+        }
     };
-    
-export default ForumData
+
+    return (
+        <div className="p-3">
+            <div className="d-flex align-items-center gap-3 justify-content-center">
+                <Button shape="circle"
+                    icon={<ArrowLeftOutlined/>}
+                    onClick={
+                        () => handleScroll("left")
+                    }/>
+
+                <div ref={scrollRef}
+                    className="d-flex gap-3 overflow-x-hidden "
+                    style={
+                        {
+                            scrollBehavior: "smooth",
+                            maxWidth: "83vw"
+                        }
+                }>
+                    {
+                    forums.map((forum) => (
+                        <Card key={
+                                forum._id
+                            }
+                            style={
+                                {
+                                    width: 200,
+                                    minWidth: 200,
+                                    height: 40,
+                                    overflow: "hidden", 
+                                    whiteSpace: "nowrap"
+                                }
+                            }
+                            className="shadow-sm flex-shrink-0 d-flex align-items-center justify-content-center">
+                            <p className="mb-0 small text-center">
+                                {
+                                forum.title
+                            }</p>
+                        </Card>
+                    ))
+                } </div>
+
+                <Button shape="circle"
+                    icon={<ArrowRightOutlined/>}
+                    onClick={
+                        () => handleScroll("right")
+                    }/>
+            </div>
+        </div>
+    );
+};
+
+export default ForumData;

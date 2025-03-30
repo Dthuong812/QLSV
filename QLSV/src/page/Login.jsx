@@ -16,17 +16,10 @@ const Login = () => {
         const response = await loginApi(values.email, values.password);
         console.log("Response Data:", response.data);
 
-        if (response?.data?.token && response?.data?.name) {
-            const { token, name } = response.data;
+        if (response?.data?.token) {
+            login(response.data); // Lưu toàn bộ thông tin vào context
 
-            // Lưu vào localStorage
-            localStorage.setItem("accessToken", token);
-            localStorage.setItem("studentName", name);
-
-            // Cập nhật vào context
-            login(name, token);
-
-            message.success(`Chào mừng ${name}!`);
+            message.success(`Chào mừng ${response.data.name}!`);
             navigate("/");
         } else {
             message.error("Dữ liệu trả về không hợp lệ!");
