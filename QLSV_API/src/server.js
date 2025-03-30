@@ -22,9 +22,13 @@ const post = require('./models/Post');
 const comment = require('./models/Comment');
 const Otp = require('./models/Otp');
 // config req.body
-app.use(cors({origin: "https://2502-reactjs-ic4b.vercel.app",
-credentials: true
-}))
+app.use(cors({
+    origin: [
+      "https://2502-reactjs-ic4b.vercel.app",
+      "http://localhost:5173"
+    ],
+    credentials: true
+  }));
 app.use(express.urlencoded({extended: true}))
 // Config view engine
 configViewEngine(app);
