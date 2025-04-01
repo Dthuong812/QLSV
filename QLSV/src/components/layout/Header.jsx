@@ -3,6 +3,7 @@ import {Input, Button} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
 import {Link, NavLink, useNavigate} from "react-router-dom";
 import {AuthContext} from "../../context/AuthContext";
+import Logo from "./Logo";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -12,16 +13,13 @@ const Header = () => {
         <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
             <div className="container-fluid">
                 <div className="d-flex w-100 justify-content-between align-items-center">
-                    <Link to={"/"}
-                        className="navbar-brand fw-bold text-success">
-                        GRP_12
-                    </Link>
+                    <Logo></Logo>
 
                     <div className="d-block d-lg-none mt-2">
                         {
                         student ? (
-                            <div className="w-100 fw-bold text-primary">
-                               <Link  to="/student"> {student.name}</Link> 
+                            <div className="w-100 fw-bold text-primary ">
+                               <Link  to="/student" className="text-decoration-none nav-link"> {student.name}</Link> 
                                </div>
                         ) : (
                             <Button type="primary" className="w-100"
@@ -46,7 +44,7 @@ const Header = () => {
                         {
                         student ? (
                             <div className="w-100 fw-bold ">
-                               <NavLink  to="/student"> {student.name}</NavLink> 
+                            <Link  to="/student" className="text-decoration-none nav-link"> {student.name}</Link> 
                                </div>
                         ) : (
                             <Button type="primary"

@@ -2,6 +2,9 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 
 const MenuNav = () => {
+  // Kiểm tra trạng thái đăng nhập bằng accessToken trong localStorage
+  const isLoggedIn = !!localStorage.getItem("accessToken");
+
   return (
     <nav className="navbar navbar-expand navbar-light bg-white shadow-sm px-4">
       <div className="container-fluid">
@@ -27,16 +30,19 @@ const MenuNav = () => {
                 Diễn đàn
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink
-                to="/student"
-                className={({ isActive }) =>
-                  "nav-link" + (isActive ? " fw-bold text-primary" : "")
-                }
-              >
-                Tài khoản
-              </NavLink>
-            </li>
+            {/* Chỉ hiển thị "Tài khoản" nếu đã đăng nhập */}
+            {isLoggedIn && (
+              <li className="nav-item">
+                <NavLink
+                  to="/student"
+                  className={({ isActive }) =>
+                    "nav-link" + (isActive ? " fw-bold text-primary" : "")
+                  }
+                >
+                  Tài khoản
+                </NavLink>
+              </li>
+            )}
           </ul>
         </div>
       </div>
