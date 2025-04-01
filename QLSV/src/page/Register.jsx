@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { registerApi } from "../services/API/LoginApi";
+import Logo from "../components/layout/Logo";
 
 const { Link } = Typography;
 
@@ -22,7 +23,9 @@ const Register = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <>
+      <div className="pt-5 ps-5"> <Logo></Logo></div>
+      <div className="d-flex justify-content-center align-items-center vh-100">
       <Card title="Đăng ký tài khoản" className="shadow-sm" style={{ width: 350 }}>
         <Form
           layout="vertical"
@@ -72,6 +75,8 @@ const Register = () => {
         </Form>
       </Card>
     </div>
+    </>
+    
   );
 };
 

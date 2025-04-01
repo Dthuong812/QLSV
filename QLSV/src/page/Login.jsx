@@ -3,6 +3,7 @@ import { Form, Input, Button, Card, message, Typography } from "antd";
 import { useNavigate } from "react-router-dom";
 import { forgotPasswordApi, loginApi } from "../services/API/LoginApi"; 
 import { AuthContext } from "../context/AuthContext";
+import Logo from "../components/layout/Logo";
 const { Link } = Typography;
 
 const Login = () => {
@@ -44,7 +45,10 @@ const Login = () => {
   };
 
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100">
+    <>
+     <div className="pt-5 ps-5"> <Logo></Logo></div>
+      <div className="d-flex justify-content-center align-items-center vh-100">
+ 
       <Card title={forgotPassword ? "Quên mật khẩu" : "Đăng nhập"} className="shadow-sm" style={{ width: 350 }}>
         {forgotPassword ? (
           <Form layout="vertical" onFinish={handleForgotPassword}>
@@ -101,6 +105,7 @@ const Login = () => {
         )}
       </Card>
     </div>
+    </>
   );
 };
 
