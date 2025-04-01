@@ -27,10 +27,10 @@ const StudentAccount = () => {
       <hr />
       <div className="d-flex flex-column gap-3">
         <button className="btn btn-outline-primary d-flex align-items-center gap-2" onClick={() => setIsProfileOpen(true)}>
-          <UserOutlined /> My Profile
+          <UserOutlined /> Thông tin cá nhân
         </button>
-        <button className="btn btn-outline-danger d-flex align-items-center gap-2 mt-2" onClick={logout}>
-          <LogoutOutlined /> Log Out
+        <button className="btn btn-outline-danger d-flex align-items-center gap-2 mt-2" onClick={handleLogout}>
+          <LogoutOutlined /> Đăng xuất
         </button>
       </div>
 

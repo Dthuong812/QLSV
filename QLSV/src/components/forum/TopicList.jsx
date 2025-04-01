@@ -38,7 +38,7 @@ const TopicList = () => {
                             <List.Item.Meta
                                 title={
                                     <Link
-                                        to={`/forum/${encodeURIComponent(topic.title)}`}
+                                        to={`/forum/${topic._id}`}
                                         className="fw-bold text-dark text-decoration-none"
                                     >
                                         {topic.title}

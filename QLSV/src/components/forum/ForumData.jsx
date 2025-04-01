@@ -2,22 +2,42 @@ import React, {useEffect, useRef, useState} from "react";
 import {Button, Card} from "antd";
 import {ArrowLeftOutlined, ArrowRightOutlined} from "@ant-design/icons";
 import {getForumApi} from "../../services/API/ForumApi";
+import {getPostApi} from "../../services/API/PostApi"; // API lấy bài viết
+import {NavLink} from "react-router-dom";
 
 const ForumData = () => {
     const [forums, setForums] = useState([]);
+    const [postCounts, setPostCounts] = useState({});
     const scrollRef = useRef(null);
 
     useEffect(() => {
-        const fetchForums = async () => {
+        const fetchData = async () => {
             try {
-                const res = await getForumApi();
-                setForums(res.data.forums);
+                const [forumRes, postRes] = await Promise.all([getForumApi(), getPostApi()]);
+
+                const forumsData = forumRes.data.forums || [];
+                console.log("forumsData", forumsData);
+
+                const postsData = postRes.data.posts || [];
+                console.log("postsData", postsData);
+
+
+                const counts = postsData.reduce((acc, post) => {
+                    const forumId = post.forum._id;
+                    if (forumId) {
+                        acc[forumId] = (acc[forumId] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+                console.log(counts)
+                setForums(forumsData);
+                setPostCounts(counts);
             } catch (error) {
-                console.error("Lỗi khi lấy danh sách forum:", error);
+                console.error("Lỗi khi lấy dữ liệu:", error);
             }
         };
 
-        fetchForums();
+        fetchData();
     }, []);
 
     const handleScroll = (direction) => {
@@ -31,7 +51,7 @@ const ForumData = () => {
     };
 
     return (
-        <div className="p-3">
+        <div className="mt-3">
             <div className="d-flex align-items-center gap-3 justify-content-center">
                 <Button shape="circle"
                     icon={<ArrowLeftOutlined/>}
@@ -40,7 +60,7 @@ const ForumData = () => {
                     }/>
 
                 <div ref={scrollRef}
-                    className="d-flex gap-3 overflow-x-hidden "
+                    className="d-flex gap-3 overflow-x-hidden overflow-y-hidden p-2"
                     style={
                         {
                             scrollBehavior: "smooth",
@@ -48,28 +68,52 @@ const ForumData = () => {
                         }
                 }>
                     {
-                    forums.map((forum) => (
-                        <Card key={
-                                forum._id
-                            }
-                            style={
-                                {
-                                    width: 200,
-                                    minWidth: 200,
-                                    height: 40,
-                                    overflow: "hidden", 
-                                    whiteSpace: "nowrap"
+                    forums.map((forum) => {
+                        const slug = forum._id;
+                        return (
+                            <NavLink to={
+                                    `/forum/${slug}`
                                 }
-                            }
-                            className="shadow-sm flex-shrink-0 d-flex align-items-center justify-content-center">
-                            <p className="mb-0 small text-center">
-                                {
-                                forum.title
-                            }</p>
-                        </Card>
-                    ))
+                                key={
+                                    forum._id
+                                }
+                                style={
+                                    {textDecoration: "none"}
+                                }
+                                className={
+                                    ({isActive}) => isActive ? "active-card" : ""
+                            }>
+                                <div className="card shadow-sm"
+                                    style={
+                                        {
+                                            minWidth: "300px", 
+                                        }
+                                    }
+                                    onMouseEnter={
+                                        (e) => (e.currentTarget.style.transform = "scale(1.03)")
+                                    }
+                                    onMouseLeave={
+                                        (e) => (e.currentTarget.style.transform = "scale(1)")
+                                }>
+                                    <div className="card-body text-center">
+                                        <h5 className="card-title mb-2">
+                                            {
+                                            forum.title
+                                        }</h5>
+                                        <p className="card-text text-muted mb-2">
+                                            {
+                                            forum.description
+                                        }</p>
+                                        <p className="card-text small fw-bold">
+                                            Bài viết: {
+                                            postCounts[forum._id] || 0
+                                        } </p>
+                                    </div>
+                                </div>
+                            </NavLink>
+                        );
+                    })
                 } </div>
-
                 <Button shape="circle"
                     icon={<ArrowRightOutlined/>}
                     onClick={

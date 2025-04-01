@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import { Button, Modal, Form, Input, Tag, message } from "antd";
+import { Button, Modal, Form, Input, message } from "antd";
+import { createForumApi } from "../../services/API/ForumApi";
 
 const NewForum = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
-  const [tags, setTags] = useState([]);
-  const [inputTag, setInputTag] = useState("");
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -14,89 +13,69 @@ const NewForum = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
     form.resetFields();
-    setTags([]);
-    setInputTag("");
   };
 
-  const handleAddTag = () => {
-    if (inputTag.trim() && !tags.includes(inputTag.trim())) {
-      setTags([...tags, inputTag.trim()]);
-      setInputTag("");
+  const handleSubmit = async (values) => {
+    const forumData = {
+      title: values.title,
+      description: values.description || "", // Nếu không nhập, gửi chuỗi rỗng
+      expireInHours: values.expireInHours || 1, // Mặc định là 1 nếu không nhập
+    };
+
+    try {
+      const response = await createForumApi(forumData);
+      console.log("📝 Chủ đề mới:", forumData);
+      console.log("Phản hồi từ server:", response.data);
+      message.success("Tạo chủ đề thành công!");
+      handleCancel();
+    } catch (error) {
+      console.error("Lỗi khi tạo chủ đề:", error);
+      message.error("Tạo chủ đề thất bại!");
     }
-  };
-
-  const handleRemoveTag = (removedTag) => {
-    setTags(tags.filter((tag) => tag !== removedTag));
-  };
-
-  const handleSubmit = (values) => {
-    console.log("📝 Bài viết mới:", { ...values, tags });
-    message.success("Đăng bài thành công!");
-    handleCancel();
   };
 
   return (
     <div className="px-5 py-3 d-flex flex-grow-1 justify-content-end">
       <Button type="primary" onClick={showModal}>
-        Thêm bài viết
+        Thêm chủ đề
       </Button>
 
       <Modal
-        title="Tạo bài viết mới"
+        title="Tạo chủ đề mới"
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <Form.Item label="Thêm chủ đề">
-            <Input
-              value={inputTag}
-              onChange={(e) => setInputTag(e.target.value)}
-              onPressEnter={handleAddTag}
-              placeholder="Nhập chủ đề "
-            />
-            <div className="mt-2">
-              {tags.map((tag) => (
-                <Tag
-                  key={tag}
-                  closable
-                  onClose={() => handleRemoveTag(tag)}
-                  style={{ marginBottom: 8 }}
-                >
-                  {tag}
-                </Tag>
-              ))}
-            </div>
-          </Form.Item>
-          <Form.Item label="Tiêu đề">
-            <Input
-              value={inputTag}
-              onChange={(e) => setInputTag(e.target.value)}
-              onPressEnter={handleAddTag}
-              placeholder="Nhập tiêu đề "
-            />
-            <div className="mt-2">
-              {tags.map((tag) => (
-                <Tag
-                  key={tag}
-                  closable
-                  onClose={() => handleRemoveTag(tag)}
-                  style={{ marginBottom: 8 }}
-                >
-                  {tag}
-                </Tag>
-              ))}
-            </div>
-          </Form.Item>
+    
           <Form.Item
-            label="Nội dung bài viết"
-            name="caption"
-            rules={[{ required: true, message: "Vui lòng nhập nội dung!" }]}
+            label="Tiêu đề"
+            name="title"
+            rules={[{ required: true, message: "Vui lòng nhập tiêu đề!" }]}
           >
-            <Input.TextArea rows={3} placeholder="Viết gì đó..." />
+            <Input placeholder="Nhập tiêu đề" />
           </Form.Item>
 
-         
+          <Form.Item label="Mô tả" name="description">
+            <Input.TextArea placeholder="Nhập mô tả (tùy chọn)" rows={3} />
+          </Form.Item>
+
+
+          <Form.Item
+            label="Thời gian hết hạn (giờ)"
+            name="expireInHours"
+            rules={[
+              { required: true, message: "Vui lòng nhập thời gian hết hạn!" },
+              {
+                type: "number",
+                min: 1,
+                message: "Thời gian phải lớn hơn 0!",
+              },
+            ]}
+            normalize={(value) => Number(value)} 
+          >
+            <Input type="number" placeholder="Nhập số giờ" defaultValue={1} />
+          </Form.Item>
 
           <Form.Item>
             <Button type="primary" htmlType="submit" block>

@@ -5,48 +5,63 @@ import { getPostApi } from "../../services/API/PostApi";
 import { getCommentApi } from "../../services/API/CommentApi";
 import { Link } from "react-router-dom";
 
-const PostData = () => {
+const PostData = ({ forumId, posts: propPosts }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
   useEffect(() => {
-    const fetchPostsWithComments = async () => {
-      setLoading(true);
-      try {
-        const res = await getPostApi();
-        const postList = res.data.posts || [];
-
-        const postsWithComments = await Promise.all(
-          postList.map(async (post) => {
-            try {
-              const commentRes = await getCommentApi(post._id);
-              const commentCount =
-                commentRes.data.total ||
-                (commentRes.data.comments && commentRes.data.comments.length) ||
-                0;
-              return { ...post, commentCount };
-            } catch {
-              return { ...post, commentCount: 0 };
-            }
-          })
+    if (propPosts?.length > 0) {
+      setPosts((prevPosts) => {
+        const newPosts = propPosts.filter(
+          (newPost) => !prevPosts.some((p) => p._id === newPost._id)
         );
+        return [...newPosts, ...prevPosts]; // Giữ bài mới ở đầu danh sách
+      });
+      setLoading(false);
+    }
+  }, [propPosts]);
 
-        const sortedPosts = postsWithComments
-          .sort((a, b) => b.commentCount - a.commentCount)
-          .slice(0, 20); 
+  useEffect(() => {
+    if (!propPosts || propPosts.length === 0) {
+      const fetchPostsWithComments = async () => {
+        setLoading(true);
+        try {
+          const res = await getPostApi();
+          let postList = res.data.posts || [];
 
-        setPosts(sortedPosts);
-      } catch (err) {
-        console.error("Lỗi khi lấy bài viết:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+          if (forumId) {
+            postList = postList.filter((post) => post.forum?._id === forumId);
+          }
 
-    fetchPostsWithComments();
-  }, []);
+          const postsWithComments = await Promise.all(
+            postList.map(async (post) => {
+              try {
+                const commentRes = await getCommentApi(post._id);
+                const commentCount = commentRes.data.total || 0;
+                return { ...post, commentCount };
+              } catch {
+                return { ...post, commentCount: 0 };
+              }
+            })
+          );
+
+          setPosts(postsWithComments);
+        } catch (err) {
+          console.error("Lỗi khi lấy bài viết:", err);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchPostsWithComments();
+    }
+  }, [forumId]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [forumId]);
 
   const paginatedPosts = posts.slice(
     (currentPage - 1) * pageSize,
@@ -57,7 +72,7 @@ const PostData = () => {
     <div className="m-4">
       {loading ? (
         <Skeleton active paragraph={{ rows: 5 }} />
-      ) : (
+      ) : posts.length > 0 ? (
         <>
           <List
             itemLayout="horizontal"
@@ -71,7 +86,7 @@ const PostData = () => {
                   {post.title}
                 </Link>
                 <div className="text-muted">
-                  <span className="me-3">👤 {post.author?.name || "Ẩn danh"}</span>
+                  <span className="me-3">👤 {post.author?.name }</span>
                   📅 {new Date(post.createdAt).toLocaleString()}{" "}
                   <span className="me-3">
                     <EyeOutlined className="me-1" /> {post.views || 0}
@@ -90,6 +105,12 @@ const PostData = () => {
             />
           </div>
         </>
+      ) : (
+        <p className="text-center">
+          {forumId
+            ? "Không có bài viết nào cho chủ đề này."
+            : "Không có bài viết nào."}
+        </p>
       )}
     </div>
   );
