@@ -25,8 +25,8 @@ const Otp = require('./models/Otp');
 app.use(cors({
     origin: [
       "https://2502-reactjs-ic4b.vercel.app",
-      "https://qlsv-nine.vercel.app/",
-      "qlsv-kfno4w40b-dthuong812s-projects.vercel.app",
+      "https://qlsv-nine.vercel.app",
+      "https://qlsv-kfno4w40b-dthuong812s-projects.vercel.app",
       "http://localhost:5173"
     ],
     credentials: true
