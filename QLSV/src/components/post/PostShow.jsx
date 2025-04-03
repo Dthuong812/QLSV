@@ -5,6 +5,7 @@ import { getPostByIdApi } from "../../services/API/PostApi";
 import { getCommentApi } from "../../services/API/CommentApi";
 import CommentShow from "../comment/CommentShow";
 import CommentNew from "../comment/CommentNew";
+import PostRelated from "./PostRelated"; // Import bài viết liên quan
 
 const { Title, Paragraph } = Typography;
 
@@ -43,20 +44,16 @@ const PostShow = () => {
     fetchPostAndComments();
   }, [id_post]);
 
-  // Hàm thêm bình luận mới
   const handleAddComment = (newComment) => {
     setComments((prevComments) => [newComment, ...prevComments]);
   };
 
-  // Hàm xóa bình luận
   const handleDeleteComment = (id_comment) => {
-    console.log(id_comment)
     setComments((prevComments) =>
       prevComments.filter((comment) => comment._id !== id_comment)
     );
   };
 
-  // Hàm sửa bình luận
   const handleEditComment = (id_comment, newContent) => {
     setComments((prevComments) =>
       prevComments.map((comment) =>
@@ -69,22 +66,28 @@ const PostShow = () => {
   if (!post) return <p>Bài viết không tồn tại!</p>;
 
   return (
-    <Card className="m-5 shadow-sm">
-      <Paragraph><strong>Diễn đàn:</strong> {post.forum.title}</Paragraph>
-      <Title level={2}>{post.title}</Title>
-      <Paragraph>{post.content}</Paragraph>
-      <div className="mt-3">
-        <Paragraph><strong>Tác giả:</strong> {post.author.name} ({post.author.email})</Paragraph>
-        <Paragraph><strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}</Paragraph>
+    <div className="d-flex p-5">
+    <Card className="shadow-sm w-75 me-5 h-50">
+    <Paragraph><strong>Diễn đàn:</strong> {post.forum.title}</Paragraph>
+    <Title level={2}>{post.title}</Title>
+    <Paragraph>{post.content}</Paragraph>
+    <div className="mt-3">
+      <Paragraph><strong>Tác giả:</strong> {post.author.name} ({post.author.email})</Paragraph>
+      <Paragraph><strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}</Paragraph>
 
-        <CommentShow
-          comments={comments}
-          onDeleteComment={handleDeleteComment}
-          onEditComment={handleEditComment}
-        />
-        <CommentNew postId={id_post} onAddComment={handleAddComment} />
-      </div>
-    </Card>
+      <CommentShow
+        comments={comments}
+        onDeleteComment={handleDeleteComment}
+        onEditComment={handleEditComment}
+      />
+      <CommentNew postId={id_post} onAddComment={handleAddComment} />
+    </div>
+  </Card>
+  {/* Hiển thị bài viết liên quan */}
+  <div className="w-25">
+  <PostRelated postId={id_post} topicId={post.forum._id} />
+  </div>
+  </div>
   );
 };
 

@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Spin, message } from "antd";
+import { Card, Row, Col, Typography, Spin, message, Pagination } from "antd";
 import { Link } from "react-router-dom";
-import { getForumApi } from "../../services/API/PostApi"; 
+import { getPostApi } from "../../services/API/PostApi";
 
 const { Title, Paragraph } = Typography;
 
 const PostRelated = ({ postId, topicId }) => {
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 4;
 
-  // Hàm lấy bài viết liên quan theo chủ đề
   const fetchRelatedPosts = async () => {
     if (!topicId) {
       setRelatedPosts([]);
@@ -19,28 +20,22 @@ const PostRelated = ({ postId, topicId }) => {
 
     setLoading(true);
     try {
-      // Giả sử API chấp nhận topicId để lọc bài viết theo chủ đề
-      const response = await getForumApi(topicId);
-      console.log("Related posts response:", response);
-
-      if (response.success) {
-        // Lọc bài viết: cùng topicId và loại trừ postId hiện tại
-        const filteredPosts = response.data.posts
-          .filter((post) => {
-            // Kiểm tra chủ đề của bài viết
-            const postTopicId = post.forum?._id || post.topicId; // Tùy cấu trúc API
-            return postTopicId === topicId && post._id !== postId;
-          })
-          .slice(0, 3); // Giới hạn 3 bài viết liên quan
+      const response = await getPostApi();
+      if (response?.data?.success) {
+        const filteredPosts = response.data.posts.filter(
+          (post) => post.forum?._id === topicId && post._id !== postId
+        );
         setRelatedPosts(filteredPosts);
       } else {
-        message.error(response.message || "Không thể lấy bài viết liên quan!");
+        message.error(response?.message || "Failed to fetch related posts!");
         setRelatedPosts([]);
       }
     } catch (error) {
-      console.error("Lỗi khi lấy bài viết liên quan:", error);
+      console.error("Error fetching related posts:", error);
       message.error(
-        error.message || "Lỗi server khi lấy bài viết liên quan!"
+        error.response?.status === 404 
+          ? "Posts not found" 
+          : "Error fetching related posts!"
       );
       setRelatedPosts([]);
     } finally {
@@ -50,63 +45,55 @@ const PostRelated = ({ postId, topicId }) => {
 
   useEffect(() => {
     fetchRelatedPosts();
-  }, [topicId, postId]); // Cập nhật khi topicId hoặc postId thay đổi
+  }, [topicId, postId]);
+
+  // Pagination calculation
+  const startIndex = (currentPage - 1) * postsPerPage;
+  const endIndex = startIndex + postsPerPage;
+  const paginatedPosts = relatedPosts.slice(startIndex, endIndex);
 
   if (loading) {
     return <Spin size="large" style={{ display: "block", margin: "20px auto" }} />;
   }
 
-  if (relatedPosts.length === 0) {
+  if (!relatedPosts.length) {
     return (
       <div className="related-posts mt-5">
-        <Title level={3}>Bài viết liên quan</Title>
-        <p>Không có bài viết nào cùng chủ đề.</p>
+        <Title level={3}>Related Posts</Title>
+        <p>No posts found for this topic.</p>
       </div>
     );
   }
 
   return (
-    <div className="related-posts mt-5">
-      <Title level={3}>Bài viết liên quan</Title>
-      <Row gutter={[16, 16]}>
-        {relatedPosts.map((post) => (
-          <Col xs={24} sm={12} md={8} key={post._id}>
-            <Card
-              hoverable
-              cover={
-                post.imageUrl ? (
-                  <img
-                    alt={post.title}
-                    src={post.imageUrl}
-                    style={{ height: 150, objectFit: "cover" }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      height: 150,
-                      background: "#f0f0f0",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <span>Không có hình ảnh</span>
-                  </div>
-                )
-              }
-            >
-              <Link to={`/post/${post._id}`}>
+    <div className="related-posts">
+      <Title level={3}>Related Posts</Title>
+      <Col gutter={[16, 16]}>
+        {paginatedPosts.map((post) => (
+          <Col key={post._id}>
+            <Card hoverable className="w-100  mt-3">
+              <Link to={`/post/${post._id}`} className="text-decoration-none">
                 <Title level={4} ellipsis={{ rows: 1 }}>
                   {post.title}
                 </Title>
                 <Paragraph ellipsis={{ rows: 2 }}>
-                  {post.description || "Không có mô tả"}
+                Tác giả: {post.author?.name || "Unknown"}
                 </Paragraph>
               </Link>
             </Card>
           </Col>
         ))}
-      </Row>
+      </Col>
+      {relatedPosts.length > postsPerPage && (
+        <Pagination
+          current={currentPage}
+          total={relatedPosts.length}
+          pageSize={postsPerPage}
+          onChange={setCurrentPage}
+          className="mt-4 d-flex justify-content-end"
+          style={{ textAlign: "right" }}
+        />
+      )}
     </div>
   );
 };

@@ -13,7 +13,7 @@ const CommentShow = ({ comments, onDeleteComment, onEditComment }) => {
   const navigate = useNavigate();
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editContent, setEditContent] = useState("");
-  const [hoveredCommentId, setHoveredCommentId] = useState(null); // Theo dõi bình luận được hover
+  const [hoveredCommentId, setHoveredCommentId] = useState(null); 
 
   const handleLoginRedirect = () => {
     navigate("/login");

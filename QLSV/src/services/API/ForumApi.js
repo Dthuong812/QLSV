@@ -22,7 +22,31 @@ const createForumApi = (forumData) => {
       }
     );
   };
+  const deleteForumApi = async (id_forum) => {
+    const accessToken = localStorage.getItem("accessToken");
+    console.log(accessToken)
+
+    return await axios.delete(`v1/forum/topics/${id_forum}`,{
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json"
+        }
+    });
+};
+const updateForumApi = async (id_forum, title,description) => {
+  const accessToken = localStorage.getItem("accessToken");
+  console.log(accessToken)
+  return await axios.put(`v1/forum/topics/${id_forum}`, {title,description},
+  {
+      headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+      }
+  });
+};
 export {
     getForumApi,
-    createForumApi
+    createForumApi,
+    updateForumApi,
+    deleteForumApi
 }
