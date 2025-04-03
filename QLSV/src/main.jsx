@@ -15,6 +15,7 @@ import PostPage from './page/PostPage.jsx';
 import ForumPageID from './page/ForumPageID.jsx';
 import ForgotPsWord from './page/ForgotPsWord.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import StudentPageID from './page/StudentPageID.jsx';
 
 
 const router = createBrowserRouter([
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path: "/forum/:title",
         element: <ForumPageID />,
+      },
+      {
+        path: "/student/:id_student",
+        element:<StudentPageID/>
       },
       {
         path: "/student",

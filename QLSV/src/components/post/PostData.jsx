@@ -5,7 +5,7 @@ import { getPostApi } from "../../services/API/PostApi";
 import { getCommentApi } from "../../services/API/CommentApi";
 import { Link } from "react-router-dom";
 
-const PostData = ({ forumId, posts: propPosts }) => {
+const PostData = ({ forumId, posts: propPosts ,filterByAuthor}) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -34,7 +34,9 @@ const PostData = ({ forumId, posts: propPosts }) => {
           if (forumId) {
             postList = postList.filter((post) => post.forum?._id === forumId);
           }
-
+          if (filterByAuthor) {
+            postList = postList.filter((post) => post.author?._id === filterByAuthor);
+          }
           const postsWithComments = await Promise.all(
             postList.map(async (post) => {
               try {
@@ -57,7 +59,7 @@ const PostData = ({ forumId, posts: propPosts }) => {
 
       fetchPostsWithComments();
     }
-  }, [forumId]);
+  }, [forumId,filterByAuthor]);
 
   useEffect(() => {
     setCurrentPage(1);

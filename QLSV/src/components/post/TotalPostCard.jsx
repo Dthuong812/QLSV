@@ -12,7 +12,7 @@ const TotalPostCard = () => {
     >
       <div>
         <h6>Tổng bài viết</h6>
-        <p className="mb-1">Total Posts</p>
+        <p className="mb-1">5</p>
       </div>
       <FileTextOutlined style={{ fontSize: "50px", opacity: 0.8 }} />
     </Card>

@@ -1,30 +1,41 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import Banner from '../components/layout/Banner'
 import MenuNav from '../components/layout/MenuNav'
 
 import FooterComponent from '../components/layout/FooterComponent'
 import StudentAccount from '../components/student/StudentAccount'
 import PostData from '../components/post/PostData'
-import TotalPostCard from '../components/post/TotalPostCard'
 import Header from '../components/layout/Header'
+import { AuthContext } from '../context/AuthContext'
+import ForumData from '../components/forum/ForumData'
 
-const StudentPage = () => (
-  <>
-    <Header></Header>
-    <Banner></Banner>
-    <MenuNav></MenuNav>
-    <div className="d-flex m-4">
-      <div className="w-75">
-       <div className="d-flex gap-4 ms-4 ">
-       <TotalPostCard />
-       <TotalPostCard />
-       </div>
-        <PostData></PostData>
+const StudentPage = () => {
+  const { student} = useContext(AuthContext);
+  return (
+      <>
+        <Header></Header>
+        <Banner></Banner>
+        <MenuNav></MenuNav>
+        <div className="">
+        {student ? (
+            <ForumData filterByAuthor={student.id} />
+          ) : (
+            <p>Đang tải thông tin tài khoản...</p>
+          )}
+        </div>
+        <div className="d-flex m-4">
+        <div className="w-75">
+          {student ? (
+            <PostData filterByAuthor={student.id} />
+          ) : (
+            <p>Đang tải thông tin tài khoản...</p>
+          )}
+        </div>
+        <StudentAccount />
       </div>
-      <StudentAccount></StudentAccount>
-    </div>
-    <FooterComponent></FooterComponent>
-  </>
-)
+        <FooterComponent></FooterComponent>
+      </>
+    )
+}
 
 export default StudentPage
