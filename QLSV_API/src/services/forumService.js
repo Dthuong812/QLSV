@@ -4,13 +4,28 @@ module.exports = {
 
     createForumService: async (title, description, studentId, expireInHours) => {
         try {
-            const expiresAt = new Date();
-            expiresAt.setHours(expiresAt.getHours() + expireInHours); // Hết hạn sau X giờ
+            if (!expireInHours || expireInHours <= 0) {
+                throw new Error("Thời gian hết hạn phải lớn hơn 0");
+            }
     
-            const forum = await Forum.create({ title, description, createdBy: studentId, expiresAt });
+            const expiresAt = new Date();
+            expiresAt.setHours(expiresAt.getHours() + expireInHours);
+    
+            const now = new Date();
+            if (expiresAt <= now) {
+                throw new Error("Thời gian hết hạn không hợp lệ");
+            }
+    
+            const forum = await Forum.create({
+                title,
+                description,
+                createdBy: studentId,
+                expiresAt
+            });
+    
             return forum;
         } catch (error) {
-            console.error(" Lỗi khi tạo chủ đề:", error);
+            console.error("Lỗi khi tạo chủ đề:", error);
             throw error;
         }
     },
