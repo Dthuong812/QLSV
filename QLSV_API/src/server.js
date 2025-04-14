@@ -1,6 +1,7 @@
 require('dotenv').config();
 const cors = require('cors');
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const connection = require('./config/database');
 const configViewEngine = require('./config/viewEngine');
 const studentRoute = require('./routes/studentRoute')
