@@ -23,7 +23,9 @@ module.exports = {
                 error: result.error,
               });
             }
-            image = result.path; // URL từ S3
+            image = result.path; // URL từ Cloudinary
+          } else {
+            console.log("No image file provided in request");
           }
     
           const newPost = await createPostService({ title, content, forum, author, image });
@@ -34,6 +36,7 @@ module.exports = {
             post: newPost,
           });
         } catch (error) {
+          console.error("Create post error:", error);
           res.status(400).json({
             success: false,
             message: "Lỗi tạo bài viết!",

@@ -1,40 +1,37 @@
-const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const path = require("path");
+const cloudinary = require("cloudinary").v2;
 
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
+// Cấu hình Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const uploadSingleFile = async (fileObject) => {
   try {
-    const extName = path.extname(fileObject.name);
-    const baseName = path.basename(fileObject.name, extName);
-    const finalName = `images/${baseName}-${Date.now()}${extName}`;
-
-    const params = {
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: finalName,
-      Body: fileObject.data,
-      ContentType: fileObject.mimetype,
-    };
-
-    await s3Client.send(new PutObjectCommand(params));
-    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${finalName}`;
+    // Upload ảnh lên Cloudinary
+    const result = await cloudinary.uploader.upload_stream(
+      {
+        folder: "qlsv-tbkt/images", // Lưu vào folder trên Cloudinary
+        resource_type: "image",
+      },
+      (error, result) => {
+        if (error) throw error;
+        return result;
+      }
+    ).end(fileObject.data);
 
     return {
       status: "success",
-      path: fileUrl,
+      path: result.secure_url, // URL ảnh từ Cloudinary
       error: null,
     };
   } catch (error) {
+    console.error("Cloudinary upload error:", error);
     return {
       status: "failed",
       path: null,
-      error: JSON.stringify(error),
+      error: error.message,
     };
   }
 };
