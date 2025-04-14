@@ -5,7 +5,7 @@ const {
     updatePostService,
     deletePostService
 } = require("../services/postService");
-
+const { uploadSingleFile } = require('../services/fileService');
 module.exports = {
     // Tạo bài viết
     createPostController: async (req, res) => {
