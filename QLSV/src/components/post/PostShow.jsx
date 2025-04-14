@@ -5,7 +5,7 @@ import { getPostByIdApi } from "../../services/API/PostApi";
 import { getCommentApi } from "../../services/API/CommentApi";
 import CommentShow from "../comment/CommentShow";
 import CommentNew from "../comment/CommentNew";
-import PostRelated from "./PostRelated"; // Import bài viết liên quan
+import PostRelated from "./PostRelated";
 
 const { Title, Paragraph } = Typography;
 
@@ -62,32 +62,57 @@ const PostShow = () => {
     );
   };
 
-  if (loading) return <Spin size="large" />;
-  if (!post) return <p>Bài viết không tồn tại!</p>;
+  if (loading) return <Spin size="large" className="d-flex justify-content-center p-5" />;
+  if (!post) return <p className="text-center mt-5">Bài viết không tồn tại!</p>;
 
   return (
     <div className="d-flex p-5">
-    <Card className="shadow-sm w-75 me-5 h-50">
-    <Paragraph><strong>Diễn đàn:</strong> {post.forum.title}</Paragraph>
-    <Title level={2}>{post.title}</Title>
-    <Paragraph>{post.content}</Paragraph>
-    <div className="mt-3">
-      <Paragraph><strong>Tác giả:</strong> {post.author.name} ({post.author.email})</Paragraph>
-      <Paragraph><strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}</Paragraph>
+      <Card className="shadow-sm w-75 me-5 h-50">
+        <Paragraph>
+          <strong>Diễn đàn:</strong> {post.forum.title}
+        </Paragraph>
+        <Title level={2}>{post.title}</Title>
+        <Paragraph>{post.content}</Paragraph>
+        <div className="mt-3">
+        {post.image && (
+            <img
+              src={post.image}
+              alt="Post image"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "800px",
+                objectFit: "contain",
+                borderRadius: "4px",
+                marginTop: "10px",
+                marginBottom: "10px",
+              }}
+              loading="lazy"
+              onError={(e) => {
+                e.target.src = "/fallback-image.jpg";
+                console.error("Error loading image:", post.image);
+              }}
+            />
+          )}
+          <Paragraph>
+            <strong>Tác giả:</strong> {post.author.name} ({post.author.email})
+          </Paragraph>
+          
+          <Paragraph>
+            <strong>Ngày đăng:</strong> {new Date(post.createdAt).toLocaleString()}
+          </Paragraph>
 
-      <CommentShow
-        comments={comments}
-        onDeleteComment={handleDeleteComment}
-        onEditComment={handleEditComment}
-      />
-      <CommentNew postId={id_post} onAddComment={handleAddComment} />
+          <CommentShow
+            comments={comments}
+            onDeleteComment={handleDeleteComment}
+            onEditComment={handleEditComment}
+          />
+          <CommentNew postId={id_post} onAddComment={handleAddComment} />
+        </div>
+      </Card>
+      <div className="w-25">
+        <PostRelated postId={id_post} topicId={post.forum._id} />
+      </div>
     </div>
-  </Card>
-  {/* Hiển thị bài viết liên quan */}
-  <div className="w-25">
-  <PostRelated postId={id_post} topicId={post.forum._id} />
-  </div>
-  </div>
   );
 };
 
