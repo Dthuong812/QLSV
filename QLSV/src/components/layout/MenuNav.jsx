@@ -5,6 +5,14 @@ const MenuNav = () => {
   // Kiểm tra trạng thái đăng nhập bằng accessToken trong localStorage
   const isLoggedIn = !!localStorage.getItem("accessToken");
 
+  // Lấy thông tin người dùng từ localStorage (giả sử dữ liệu người dùng được lưu dưới dạng JSON)
+  const user = localStorage.getItem("student")
+    ? JSON.parse(localStorage.getItem("student"))
+    : null;
+
+  // Kiểm tra xem người dùng có email cụ thể hay không
+  const isSpecificUser = user?.email === "thuongthanthien812@gmail.com";
+
   return (
     <nav className="navbar navbar-expand navbar-light bg-white shadow-sm px-4">
       <div className="container-fluid">
@@ -32,7 +40,7 @@ const MenuNav = () => {
             </li>
             {/* Chỉ hiển thị "Tài khoản" nếu đã đăng nhập */}
             {isLoggedIn && (
-              <li className="nav-item">
+              <li className="nav-item me-4">
                 <NavLink
                   to="/student"
                   className={({ isActive }) =>
@@ -40,6 +48,19 @@ const MenuNav = () => {
                   }
                 >
                   Tài khoản
+                </NavLink>
+              </li>
+            )}
+            {/* Chỉ hiển thị "Quản lý" nếu là người dùng có email cụ thể */}
+            {isLoggedIn && isSpecificUser && (
+              <li className="nav-item">
+                <NavLink
+                  to="/admin"
+                  className={({ isActive }) =>
+                    "nav-link" + (isActive ? " fw-bold text-primary" : "")
+                  }
+                >
+                  Quản lý
                 </NavLink>
               </li>
             )}

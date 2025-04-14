@@ -16,6 +16,7 @@ import ForumPageID from './page/ForumPageID.jsx';
 import ForgotPsWord from './page/ForgotPsWord.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import StudentPageID from './page/StudentPageID.jsx';
+import AdminPage from './page/AdminPage.jsx';
 
 
 const router = createBrowserRouter([
@@ -59,6 +60,11 @@ const router = createBrowserRouter([
       {
         path: "/forgot",
         element: <ForgotPsWord/>,
+      }
+      ,
+      {
+        path: "/admin",
+        element: <AdminPage/>,
       }
     ]
   }
