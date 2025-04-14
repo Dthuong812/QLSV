@@ -3,6 +3,7 @@ const express = require("express");
 const authMiddleware = require("../middleware/auth");
 const { createPostController, getPostsController, getPostByIdController, updatePostController, deletePostController } = require("../controllers/postController");
 const { postUploadSingleFileAPI, postUploadMultipleFileAPI, getImageAPI } = require("../controllers/fileController");
+const path = require("path");
 
 const postRouter = express.Router();
 postRouter.use('/images', express.static(path.join(__dirname, 'public/images')));
