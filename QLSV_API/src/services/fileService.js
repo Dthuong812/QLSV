@@ -1,76 +1,42 @@
-const path = require('path');
-const fs = require('fs');
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
+const path = require("path");
 
-const ensureUploadPathExists = (uploadPath) => {
-    if (!fs.existsSync(uploadPath)) {
-        fs.mkdirSync(uploadPath, { recursive: true });
-    }
-};
+const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  },
+});
 
 const uploadSingleFile = async (fileObject) => {
-    const uploadPath = path.resolve(__dirname, "../public/images/upload");
-    ensureUploadPathExists(uploadPath);  // Ensure directory exists
-
+  try {
     const extName = path.extname(fileObject.name);
     const baseName = path.basename(fileObject.name, extName);
-    const finalName = `${baseName}-${Date.now()}${extName}`;
-    const finalPath = path.join(uploadPath, finalName);
+    const finalName = `images/${baseName}-${Date.now()}${extName}`;
 
-    try {
-        await fileObject.mv(finalPath);
-        return {
-            status: "success",
-            path: finalName,
-            error: null
-        };
-    } catch (error) {
-        return {
-            status: "failed",
-            path: null,
-            error: JSON.stringify(error)
-        };
-    }
-};
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: finalName,
+      Body: fileObject.data,
+      ContentType: fileObject.mimetype,
+    };
 
-const uploadMultipleFiles = async (filesArr) => {
-    const uploadPath = path.resolve(__dirname, "../public/images/upload");
-    ensureUploadPathExists(uploadPath);  // Ensure directory exists
-
-    const resultArr = [];
-    let countSuccess = 0;
-
-    for (let i = 0; i < filesArr.length; i++) {
-        const extName = path.extname(filesArr[i].name);
-        const baseName = path.basename(filesArr[i].name, extName);
-        const finalName = `${baseName}-${Date.now()}${extName}`;
-        const finalPath = path.join(uploadPath, finalName);
-
-        try {
-            await filesArr[i].mv(finalPath);
-            resultArr.push({
-                status: "success",
-                path: finalName,
-                fileName: filesArr[i].name,
-                error: null
-            });
-            countSuccess++;
-        } catch (error) {
-            resultArr.push({
-                status: "failed",
-                path: null,
-                fileName: filesArr[i].name,
-                error: JSON.stringify(error)
-            });
-        }
-    }
+    await s3Client.send(new PutObjectCommand(params));
+    const fileUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${finalName}`;
 
     return {
-        countSuccess,
-        detail: resultArr
+      status: "success",
+      path: fileUrl,
+      error: null,
     };
+  } catch (error) {
+    return {
+      status: "failed",
+      path: null,
+      error: JSON.stringify(error),
+    };
+  }
 };
 
-module.exports = {
-    uploadSingleFile,
-    uploadMultipleFiles
-};
+module.exports = { uploadSingleFile };

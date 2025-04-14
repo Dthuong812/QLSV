@@ -5,33 +5,42 @@ const {
     updatePostService,
     deletePostService
 } = require("../services/postService");
-const { uploadSingleFile } = require('../services/fileService');
+
 module.exports = {
     // Tạo bài viết
     createPostController: async (req, res) => {
         try {
-            const {title, content, forum} = req.body;
-            const author = req.student.id;
-            let image = null;
-            // Kiểm tra và xử lý file ảnh
-            if (req.files && req.files.image) {
-                const result = await uploadSingleFile(req.files.image);
-                if (result.status !== 'success') {
-                    return res.status(400).json({
-                        success: false,
-                        message: 'Lỗi tải lên ảnh!',
-                        error: result.error
-                    });
-                }
-                image = result.path; // Lưu tên file (e.g., "image-123456789.png")
+          const { title, content, forum } = req.body;
+          const author = req.student.id;
+          let image = null;
+    
+          if (req.files && req.files.image) {
+            const result = await uploadSingleFile(req.files.image);
+            if (result.status !== "success") {
+              return res.status(400).json({
+                success: false,
+                message: "Lỗi tải lên ảnh!",
+                error: result.error,
+              });
             }
-            const newPost = await createPostService({title, content, forum, author,image});
-
-            res.status(201).json({success: true, message: "Bài viết đã được tạo!", post: newPost});
+            image = result.path; // URL từ S3
+          }
+    
+          const newPost = await createPostService({ title, content, forum, author, image });
+    
+          res.status(201).json({
+            success: true,
+            message: "Bài viết đã được tạo!",
+            post: newPost,
+          });
         } catch (error) {
-            res.status(400).json({success: false, message: "Lỗi tạo bài viết!", error: error.message});
+          res.status(400).json({
+            success: false,
+            message: "Lỗi tạo bài viết!",
+            error: error.message,
+          });
         }
-    },
+      },
 
     // Lấy danh sách bài viết
     getPostsController: async (req, res) => {
