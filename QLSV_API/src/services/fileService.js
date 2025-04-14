@@ -7,33 +7,32 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-const uploadSingleFile = async (fileObject) => {
-  try {
-    // Upload ảnh lên Cloudinary
-    const result = await cloudinary.uploader.upload_stream(
+const uploadSingleFile = (fileObject) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
       {
-        folder: "qlsv-tbkt/images", // Lưu vào folder trên Cloudinary
+        folder: "qlsv-tbkt/images",
         resource_type: "image",
       },
       (error, result) => {
-        if (error) throw error;
-        return result;
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          reject({
+            status: "failed",
+            path: null,
+            error: error.message,
+          });
+        } else {
+          resolve({
+            status: "success",
+            path: result.secure_url,
+            error: null,
+          });
+        }
       }
-    ).end(fileObject.data);
+    );
 
-    return {
-      status: "success",
-      path: result.secure_url, // URL ảnh từ Cloudinary
-      error: null,
-    };
-  } catch (error) {
-    console.error("Cloudinary upload error:", error);
-    return {
-      status: "failed",
-      path: null,
-      error: error.message,
-    };
-  }
+    stream.end(fileObject.data); // Gửi dữ liệu ảnh vào stream
+  });
 };
-
 module.exports = { uploadSingleFile };
