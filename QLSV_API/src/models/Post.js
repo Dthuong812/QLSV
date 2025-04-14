@@ -10,7 +10,8 @@ const postSchema = new mongoose.Schema({
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'student'
-    }
+    },
+    image: String,
 }, {timestamps: true});
 postSchema.plugin(mongoose_delete, {overrideMethods: "all"});
 const post = mongoose.model('post', postSchema);

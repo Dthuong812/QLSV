@@ -12,6 +12,7 @@ const commentRoutes = require("./routes/commentRoute");
 
 const app = express();
 app.use(express.json()); 
+app.use(fileUpload());
 app.use(express.urlencoded({ extended: true })); 
 const port = process.env.PORT || 8888;
 // const hostname = process.env.HOST_NAME ||'0.0.0.0';
