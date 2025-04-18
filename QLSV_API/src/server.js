@@ -30,7 +30,8 @@ app.use(cors({
       "https://qlsv-nine.vercel.app",
       "https://qlsv-kfno4w40b-dthuong812s-projects.vercel.app",
       "http://localhost:5173",
-      "https://qlsv-jade.vercel.app/"
+      "https://qlsv-jade.vercel.app",
+
     ],
     credentials: true
   }));
