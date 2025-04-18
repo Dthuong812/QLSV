@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import "./MenuNav.css";
 
 const MenuNav = () => {
   // Kiểm tra trạng thái đăng nhập bằng accessToken trong localStorage
@@ -22,7 +23,7 @@ const MenuNav = () => {
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  "nav-link" + (isActive ? " fw-bold text-primary" : "")
+                  "nav-link" + (isActive ? " fw-bold text-dark " : "")
                 }
               >
                 Trang chủ
@@ -32,7 +33,7 @@ const MenuNav = () => {
               <NavLink
                 to="/forum"
                 className={({ isActive }) =>
-                  "nav-link" + (isActive ? " fw-bold text-primary" : "")
+                  "nav-link" + (isActive ? " fw-bold text-dark " : "")
                 }
               >
                 Diễn đàn
@@ -44,7 +45,7 @@ const MenuNav = () => {
                 <NavLink
                   to="/student"
                   className={({ isActive }) =>
-                    "nav-link" + (isActive ? " fw-bold text-primary" : "")
+                    "nav-link" + (isActive ? " fw-bold text-dark " : "")
                   }
                 >
                   Tài khoản
@@ -57,7 +58,7 @@ const MenuNav = () => {
                 <NavLink
                   to="/admin"
                   className={({ isActive }) =>
-                    "nav-link" + (isActive ? " fw-bold text-primary" : "")
+                    "nav-link" + (isActive ? " fw-bold text-dark " : "")
                   }
                 >
                   Quản lý

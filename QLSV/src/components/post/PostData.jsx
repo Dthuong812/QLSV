@@ -27,7 +27,7 @@ import {
 import { getCommentApi } from "../../services/API/CommentApi";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-
+import "./PostData.css"; // Import your CSS file for custom styles
 const PostData = ({ forumId, posts: propPosts, filterByAuthor }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);

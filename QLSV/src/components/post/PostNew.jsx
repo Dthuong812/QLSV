@@ -16,13 +16,10 @@ import {
   DeleteOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import {
-  deletePostApi,
-  getPostApi,
-  updatePostApi,
-} from "../../services/API/PostApi";
+import { deletePostApi, getPostApi, updatePostApi } from "../../services/API/PostApi";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import ForumData from "../forum/ForumData";
 
 const PostNew = () => {
   const [posts, setPosts] = useState([]);
@@ -32,8 +29,7 @@ const PostNew = () => {
   const [editingPost, setEditingPost] = useState(null);
   const [newTitle, setNewTitle] = useState("");
   const [newContent, setNewContent] = useState("");
-  const [newImage, setNewImage] = useState(null); // For image upload
-  const baseUrl = "http://your-server.com"; // Replace with actual server URL
+  const [newImage, setNewImage] = useState(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -49,8 +45,8 @@ const PostNew = () => {
           setPosts([]);
         }
       } catch (error) {
-        console.error("Lỗi lấy posts:", error);
-        message.error("Không thể tải bài viết!");
+        console.error("Error fetching posts:", error);
+        message.error("Unable to load posts!");
         setPosts([]);
       } finally {
         setLoading(false);
@@ -63,10 +59,10 @@ const PostNew = () => {
     try {
       await deletePostApi(postId);
       setPosts(posts.filter((post) => post._id !== postId));
-      message.success("Bài viết đã được xóa!");
+      message.success("Post deleted successfully!");
     } catch (err) {
-      console.error("Lỗi khi xóa bài viết:", err);
-      message.error("Xóa bài viết thất bại!");
+      console.error("Error deleting post:", err);
+      message.error("Failed to delete post!");
     }
   };
 
@@ -102,10 +98,10 @@ const PostNew = () => {
       );
       setIsModalVisible(false);
       setNewImage(null);
-      message.success("Bài viết đã được cập nhật!");
+      message.success("Post updated successfully!");
     } catch (err) {
-      console.error("Lỗi khi cập nhật bài viết:", err);
-      message.error("Cập nhật bài viết thất bại!");
+      console.error("Error updating post:", err);
+      message.error("Failed to update post!");
     }
   };
 
@@ -114,11 +110,11 @@ const PostNew = () => {
       const isImage = file.type.startsWith("image/");
       const isLt5M = file.size / 1024 / 1024 < 5;
       if (!isImage) {
-        message.error("Vui lòng chọn file ảnh!");
+        message.error("Please select an image file!");
         return;
       }
       if (!isLt5M) {
-        message.error("Ảnh phải nhỏ hơn 5MB!");
+        message.error("Image must be smaller than 5MB!");
         return;
       }
       setNewImage(file.originFileObj || file);
@@ -130,61 +126,63 @@ const PostNew = () => {
   const menu = (post) => (
     <Menu>
       <Menu.Item icon={<EditOutlined />} onClick={() => handleEdit(post)}>
-        Sửa
+        Edit
       </Menu.Item>
       <Menu.Item
         icon={<DeleteOutlined />}
         onClick={() => handleDelete(post._id)}
         danger
       >
-        Xóa
+        Delete
       </Menu.Item>
     </Menu>
   );
 
   return (
-    <Card title="📰 Bài viết mới nhất" className="shadow-sm m-4">
+    <>
+      <ForumData></ForumData>
+    <Card title="📰 Latest Posts" className="shadow-sm m-4">
       {loading ? (
         <Spin />
       ) : posts.length > 0 ? (
-        posts.map((item) => {
-          const isAuthor = student?.id === item.author?._id;
+        <ul className="list-unstyled">
+          {posts.map((item) => {
+            const isAuthor = student?.id === item.author?._id;
 
-          return (
-            <div
-              key={item._id}
-              className="d-flex align-items-center justify-content-between py-2 border-bottom"
-            >
-              <div className="d-flex align-items-center">
-                {/* Display image if available */}
-                
-                <div>
-                  <Link
-                    to={`/post/${item._id}`}
-                    className="fw-bold text-primary d-block text-decoration-none"
-                  >
-                    {item.title}
-                  </Link>
-                  <small className="text-muted">
-                    Tác giả: {item.author?.name || "Ẩn danh"} | Diễn đàn:{" "}
-                    {item.forum?.title || "Không xác định"}
-                  </small>
+            return (
+              <li
+                key={item._id}
+                className="d-flex align-items-center justify-content-between py-2 border-bottom"
+              >
+                <div className="d-flex align-items-center">
+                  <div>
+                    <Link
+                      to={`/post/${item._id}`}
+                      className="fw-bold text-primary d-block text-decoration-none"
+                    >
+                      {item.title}
+                    </Link>
+                    <small className="text-muted">
+                      Author: {item.author?.name || "Anonymous"} | Forum:{" "}
+                      {item.forum?.title || "Undefined"}
+                    </small>
+                  </div>
                 </div>
-              </div>
-              {isAuthor && (
-                <Dropdown overlay={menu(item)} trigger={["click"]}>
-                  <MoreOutlined style={{ fontSize: 20, cursor: "pointer" }} />
-                </Dropdown>
-              )}
-            </div>
-          );
-        })
+                {isAuthor && (
+                  <Dropdown overlay={menu(item)} trigger={["click"]}>
+                    <MoreOutlined style={{ fontSize: 20, cursor: "pointer" }} />
+                  </Dropdown>
+                )}
+              </li>
+            );
+          })}
+        </ul>
       ) : (
-        <p className="text-center m-2">Không có bài viết nào.</p>
+        <p className="text-center m-2">No posts available.</p>
       )}
 
       <Modal
-        title="Cập nhật bài viết"
+        title="Update Post"
         open={isModalVisible}
         onOk={handleUpdatePost}
         onCancel={() => {
@@ -195,13 +193,13 @@ const PostNew = () => {
         <Input
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
-          placeholder="Tiêu đề bài viết"
+          placeholder="Post Title"
           className="mb-3"
         />
         <Input.TextArea
           value={newContent}
           onChange={(e) => setNewContent(e.target.value)}
-          placeholder="Nội dung bài viết"
+          placeholder="Post Content"
           rows={4}
           className="mb-3"
         />
@@ -213,10 +211,11 @@ const PostNew = () => {
             newImage ? [{ uid: "-1", name: newImage.name, status: "done" }] : []
           }
         >
-          <Button icon={<UploadOutlined />}>Chọn ảnh mới (tùy chọn)</Button>
+          <Button icon={<UploadOutlined />}>Select New Image (Optional)</Button>
         </Upload>
       </Modal>
     </Card>
+    </>
   );
 };
 
